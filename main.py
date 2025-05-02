@@ -6,6 +6,9 @@ print(hangman)
 random_choice = random.choice(word_list)
 # print(random_choice)
 
+### hey its me pratham contriting this code
+### i am trying to add some more features to this game
+
 lives = 6
 
 placeholder = ""
