@@ -2,53 +2,107 @@ import random
 from hangman_art import stages, hangman
 from hangman_words import word_list
 
-print(hangman)
-random_choice = random.choice(word_list)
-# print(random_choice)
+def display_main_logo():
+    """Display the Hangman game logo."""
+    print(hangman)
 
-### hey its me pratham contriting this code
-### i am trying to add some more features to this game
+def initialize_game(word):
+    """Initialize game state with lives and placeholder for the word."""
+    lives = 6
+    placeholder = " _" * len(word)
+    return lives, placeholder
 
-lives = 6
+def select_word(word_list, difficulty=2):
+    """Select a random word based on difficulty level."""
+    if difficulty == 1:  # Easy
+        secret_word = random.choice(word_list["easy"])
+    elif difficulty == 2:  # Medium
+        secret_word = random.choice(word_list["medium"])
+    else:  # Hard
+        secret_word = random.choice(word_list["hard"])
+    return secret_word
 
-placeholder = ""
-for char in range(0, len(random_choice)):  
-    placeholder = placeholder + " _"
-print(f"Word to guess: {placeholder}")
+def display_stage(lives):
+    """Display the current hangman stage based on lives remaining."""
+    print(stages[lives])
 
-correct_word = []
-   
-game_over = False
-while not game_over:
-    guess = input("Guess a letter:\n").lower()
-
-    if guess in correct_word:
-        print(f"You've already guessed {guess}, try another word.")
-
-    display = ""
-    for letter in random_choice:
-        if guess == letter:
-            display += guess
-            correct_word.append(guess)
-        elif letter in correct_word:
-            display += letter 
-        else:
-            display += "_"
-    print(display)
-
-    
-
-    if guess not in random_choice:
-            lives = lives - 1
-            print(f"You've guessed {guess}, that's not in the word; you lose a life.")
-            print(f"**********YOU'VE GOT {lives}/6 LIVES LEFT!***********")
-            if lives == 0:
-                game_over = True
-                print(f"THE CORRECT WORD WAS {(random_choice).upper()}! YOU LOSE! ")
-                print("*****************************YOU LOSE!****************************")
-
+def check_game_over(lives, word, display):
+    """Check if the game is over (win or lose)."""
+    if lives == 0:
+        return True, False  # Game over, player loses
     if "_" not in display:
-        game_over = True
-        print("*************************YOU WIN!***************************")
+        return True, True   # Game over, player wins
+    return False, False     # Game continues
 
-    print(stages[lives])     
+def result(won, word):
+    """Display the game result."""
+    if won:
+        print("*************************YOU WIN!***************************")
+    else:
+        print(f"THE CORRECT WORD WAS {word.upper()}! YOU LOSE!")
+        print("*****************************YOU LOSE!****************************")
+
+def play():
+    """Run the Hangman game with an option to play again."""
+    while True:
+        display_main_logo()
+        
+        # Select difficulty (default to medium for this example; could be user input)
+        difficulty = 2  # Can be modified to accept user input (1, 2, or 3)
+        secret_word = select_word(word_list, difficulty)
+        
+        # Initialize game state
+        lives, placeholder = initialize_game(secret_word)
+        print(f"Word to guess: {placeholder}")
+        
+        correct_letters = []
+        game_over = False
+        
+        while not game_over:
+            print("Guess a letter: ", end="")
+            guess = input().lower()
+            
+            # Check for repeated guesses
+            if guess in correct_letters:
+                print(f"You've already guessed {guess}, try another letter.")
+                display_stage(lives)
+                continue
+            
+            # Build display string
+            display = ""
+            for letter in secret_word:
+                if guess == letter:
+                    display += guess
+                    correct_letters.append(guess)
+                elif letter in correct_letters:
+                    display += letter
+                else:
+                    display += "_"
+            print(display)
+            
+            # Handle incorrect guess
+            if guess not in secret_word:
+                lives -= 1
+                print(f"You've guessed {guess}, that's not in the word; you lose a life.")
+                print(f"**********YOU'VE GOT {lives}/6 LIVES LEFT!***********")
+            
+            # Display current stage
+            display_stage(lives)
+            
+            # Check game status
+            game_over, won = check_game_over(lives, secret_word, display)
+            
+            # Display result if game is over
+            if game_over:
+                result(won, secret_word)
+        
+        # Prompt to play again
+        print("Would you like to play again? (y/Y): ", end="")
+        play_again = input().lower()
+        if play_again not in ["y", "Y"]:
+            print("Thank you for playing Hangman!")
+            break
+
+# Start the game
+if __name__ == "__main__":
+    play()
