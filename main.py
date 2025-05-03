@@ -59,7 +59,7 @@ def play():
         game_over = False
         
         while not game_over:
-            print("Guess a letter: ", end="")
+            print("Guess a letter:")
             guess = input().lower()
             
             # Check for repeated guesses
@@ -97,11 +97,16 @@ def play():
                 result(won, secret_word)
         
         # Prompt to play again
-        print("Would you like to play again? (y/Y): ", end="")
+        print("Would you like to play again? yes / no: ", end="")
         play_again = input().lower()
-        if play_again not in ["y", "Y"]:
+
+        
+        if play_again == "no":
             print("Thank you for playing Hangman!")
             break
+        elif play_again == "yes":
+            continue
+            print("Starting a new game...")
 
 # Start the game
 if __name__ == "__main__":
