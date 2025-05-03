@@ -80,7 +80,7 @@ def play():
                     display += "_"
             print(display)
             
-            # Handle incorrect guess
+            # for incorrect guess
             if guess not in secret_word:
                 lives -= 1
                 print(f"You've guessed {guess}, that's not in the word; you lose a life.")
